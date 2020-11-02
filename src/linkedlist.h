@@ -80,7 +80,10 @@
     } \
     LL(type)* type##_ll_pop_tail(LL(type)* list) { \
         if (list == NULL) return NULL; \
-        else if (list->next == NULL) return NULL; \
+        else if (list->next == NULL) { \
+            free(list); \
+            return NULL; \
+        } \
         LL(type)* res = list; \
         while (res->next->next != NULL) res = res->next; \
         free(res->next); \
@@ -154,7 +157,7 @@ void void_ll_ptr_free(LL_PTR(void)* list);
     } \
 }
 
-#define LL_PTR_FREE2(type, list) { \
+#define LL_PTR_FREE_AUTO(type, list) { \
     LL_PTR(type)* list_ptr = list; \
     while (list_ptr != NULL) { \
         LL_PTR(type)* next = list_ptr->next; \
