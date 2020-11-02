@@ -78,6 +78,19 @@
         res->next = list; \
         return res; \
     } \
+    LL(type)* type##_ll_pop_tail(LL(type)* list) { \
+        if (list == NULL) return NULL; \
+        else if (list->next == NULL) return NULL; \
+        LL(type)* res = list; \
+        while (res->next->next != NULL) res = res->next; \
+        free(res->next); \
+        res->next = NULL; \
+        return list; \
+    } \
+    LL(type)* type##_ll_pop_head(LL(type)* list) { \
+        if (list == NULL) return NULL; \
+        return list->next; \
+    } \
     void type##_ll_printf(LL(type)* list) { \
         printf("LinkedList<" #type "> ["); \
         while (true) { \
