@@ -1,5 +1,5 @@
-#ifndef ARRAY_H
-#define ARRAY_H
+#ifndef LINKEDLIST_H
+#define LINKEDLIST_H
 
 #include <stdlib.h>
 #include <stdbool.h>
@@ -29,7 +29,7 @@
     }; \
     typedef struct type##_ll_ptr LL_PTR(type);
 
-#define DECL_LL_SOURCES(type, printer) \
+#define DECL_LL_SOURCES(type, printf_format) \
     LL(type)* type##_ll_new(type element) { \
         LL(type)* res = (LL(type)*)malloc(sizeof(struct type##_ll)); \
         res->value = element; \
@@ -97,7 +97,7 @@
     void type##_ll_printf(LL(type)* list) { \
         printf("LinkedList<" #type "> ["); \
         while (true) { \
-            printf(printer, list->value); \
+            printf(printf_format, list->value); \
             if (list->next != NULL) { \
                 printf(", "); \
                 list = list->next; \
@@ -178,4 +178,4 @@ void* void_ll_ptr_get(LL_PTR(void)* list, size_t index);
 size_t void_ll_ptr_length(LL_PTR(void)* list);
 #define LL_PTR_LENGTH(type, list) void_ll_ptr_length((LL_PTR(void)*)(list))
 
-#endif // ARRAY_H
+#endif // LINKEDLIST_H
