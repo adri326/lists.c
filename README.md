@@ -4,9 +4,10 @@ Different kinds of lists and list-like structures, implemented in pure C (ie. us
 
 ## Currently implemented
 
-- Linked Lists (`src/linkedlist.h`): comes in two flavors, a value-based one (`LL(type)`) and a pointer-based one (`LL_PTR(type)`); shipped without cyclicity assertions!
-- Vector (TODO): scalable arrays
+- Linked Lists (`linkedlist.h`): comes in two flavors, a value-based one (`LL(type)`) and a pointer-based one (`LL_PTR(type)`); shipped without cyclicity assertions!
+- Vector (`vec.h`): scalable arrays
 - Queue (TODO): scalable circular arrays
+- Binary trees (`btree.h`): shipped without cyclicity assertions!
 
 ## Installation
 
@@ -45,4 +46,29 @@ int main() {
   int_ll_printf(int_list); // print the list ([1, 0])
   int_ll_free(int_list); // free the list
 }
+```
+
+## Testing
+
+You will need [`check`](https://libcheck.github.io/check/) installed on your system and have [CMake](https://cmake.org/) be able to find it.
+
+Clone this repository:
+
+```sh
+git clone https://github.com/adri326/lists.c lists
+cd lists
+```
+
+Then build it:
+
+```sh
+mkdir build
+cd build
+cmake .. && make
+```
+
+And finally, you may run the tests:
+
+```
+./lists-test
 ```

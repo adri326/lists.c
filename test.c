@@ -4,6 +4,7 @@
 #include <check.h>
 #include <linkedlist.h>
 #include <btree.h>
+#include <vec.h>
 
 DECL_LL(int);
 DECL_LL_SOURCES(int, "%d");
@@ -11,6 +12,9 @@ DECL_LL_PTR(char);
 
 DECL_BT(int);
 DECL_BT_SOURCES(int, "%d");
+
+DECL_VEC(int);
+DECL_VEC_SOURCES(int, "%d");
 
 START_TEST(test_ll_new) {
     LL(int)* int_list = int_ll_new(10);
@@ -149,6 +153,63 @@ START_TEST(test_bt_get) {
 }
 END_TEST
 
+START_TEST(test_vec_new) {
+    VEC(int)* int_vec = int_vec_new(4);
+
+    int_vec_free(int_vec);
+}
+END_TEST
+
+START_TEST(test_vec_length) {
+    VEC(int)* int_vec = int_vec_new(4);
+
+    for (int n = 0; n < 4; n++) {
+        ck_assert_int_eq((int)int_vec_length(int_vec), n);
+        int_vec_push(int_vec, n);
+    }
+
+    int_vec_free(int_vec);
+}
+END_TEST
+
+START_TEST(test_vec_pop) {
+    VEC(int)* int_vec = int_vec_new(4);
+
+    for (int n = 0; n < 4; n++) {
+        int_vec_push(int_vec, n);
+    }
+
+    for (int n = 3; n >= 0; n--) {
+        ck_assert_int_eq(int_vec_pop(int_vec), n);
+        ck_assert_int_eq(int_vec_length(int_vec), n);
+    }
+
+    int_vec_free(int_vec);
+}
+END_TEST
+
+bool test_vec_find_sub(const int* value, const void* cmp) {
+    return *value == *(int*)cmp;
+}
+
+START_TEST(test_vec_find) {
+    VEC(int)* int_vec = int_vec_new(4);
+
+    for (int n = 0; n < 4; n++) {
+        int_vec_push(int_vec, n);
+    }
+
+    for (int n = 0; n < 4; n++) {
+        ck_assert_int_eq(int_vec_find(int_vec, test_vec_find_sub, &n), n);
+    }
+
+    int x = -1;
+    ck_assert_int_eq(int_vec_find(int_vec, test_vec_find_sub, &x), -1);
+
+    int_vec_free(int_vec);
+}
+END_TEST
+
 Suite* ll_suite() {
     Suite* res = suite_create("LinkedList");
     TCase* tc_core = tcase_create("Core");
@@ -172,14 +233,28 @@ Suite* bt_suite() {
     return res;
 }
 
+Suite* vec_suite() {
+    Suite* res = suite_create("Vec");
+    TCase* tc_core = tcase_create("Core");
+    tcase_add_test(tc_core, test_vec_new);
+    tcase_add_test(tc_core, test_vec_length);
+    tcase_add_test(tc_core, test_vec_pop);
+    tcase_add_test(tc_core, test_vec_find);
+    suite_add_tcase(res, tc_core);
+    return res;
+}
+
 int main(int argc, char* argv[]) {
     Suite* ll_s = ll_suite();
     Suite* bt_s = bt_suite();
+    Suite* vec_s = vec_suite();
     SRunner* ll_sr = srunner_create(ll_s);
     SRunner* bt_sr = srunner_create(bt_s);
+    SRunner* vec_sr = srunner_create(vec_s);
 
     srunner_run_all(ll_sr, CK_NORMAL);
     srunner_run_all(bt_sr, CK_NORMAL);
-    int fails = srunner_ntests_failed(ll_sr) + srunner_ntests_failed(bt_sr);
+    srunner_run_all(vec_sr, CK_NORMAL);
+    int fails = srunner_ntests_failed(ll_sr) + srunner_ntests_failed(bt_sr) + srunner_ntests_failed(vec_sr);
     return (fails == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
