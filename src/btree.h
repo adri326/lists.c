@@ -4,13 +4,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-enum bt_prettyprint_side {
-    BT_PRETTYPRINT_LEFT,
-    BT_PRETTYPRINT_RIGHT,
-    BT_PRETTYPRINT_ROOT,
-};
-typedef enum bt_prettyprint_side bt_prettyprint_side_t;
-
 #define BT(type) type##_bt_t
 
 // Not yet supported!
@@ -31,7 +24,11 @@ typedef enum bt_prettyprint_side bt_prettyprint_side_t;
     void type##_bt_free(BT(type)* tree); \
     bool type##_bt_is_leaf(BT(type)* node); \
     bool type##_bt_is_empty(BT(type)* node); \
-    BT(type)* type##_bt_get(BT(type)* tree, uintmax_t address);
+    BT(type)* type##_bt_left(BT(type)* node); \
+    BT(type)* type##_bt_right(BT(type)* node); \
+    BT(type)* type##_bt_get(BT(type)* tree, uintmax_t address); \
+    BT(type)* type##_bt_prefix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data); \
+    BT(type)* type##_bt_postfix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data);
 
 #define DECL_BT_SOURCES(type, printf_format) \
     BT(type)* type##_bt_new(type element) { \
@@ -106,6 +103,31 @@ typedef enum bt_prettyprint_side bt_prettyprint_side_t;
             if (tree->left == NULL) return tree; \
             else return type##_bt_get(tree->left, address >> 1); \
         } \
+    } \
+    BT(type)* type##_bt_prefix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data) { \
+        if (tree == NULL) return NULL; \
+        if (predicate(tree->value, predicate_data)) return tree; \
+        BT(type)* left = type##_bt_prefix_search(tree->left, predicate, predicate_data); \
+        if (left != NULL) return left; \
+        BT(type)* right = type##_bt_prefix_search(tree->right, predicate, predicate_data); \
+        return right; \
+    } \
+    BT(type)* type##_bt_postfix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data) { \
+        if (tree == NULL) return NULL; \
+        BT(type)* left = type##_bt_postfix_search(tree->left, predicate, predicate_data); \
+        if (left != NULL) return left; \
+        BT(type)* right = type##_bt_postfix_search(tree->right, predicate, predicate_data); \
+        if (right != NULL) return right; \
+        if (predicate(tree->value, predicate_data)) return tree; \
+        else return NULL; \
+    } \
+    BT(type)* type##_bt_left(BT(type)* node) { \
+        if (node == NULL) return NULL; \
+        return node->left; \
+    } \
+    BT(type)* type##_bt_right(BT(type)* node) { \
+        if (node == NULL) return NULL; \
+        return node->right; \
     }
 
 /** @struct TYPE_bt

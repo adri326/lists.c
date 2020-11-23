@@ -4,6 +4,7 @@
 #include <check.h>
 #include <linkedlist.h>
 #include <btree.h>
+#include <bstree.h>
 #include <vec.h>
 
 DECL_LL(int);
@@ -12,6 +13,11 @@ DECL_LL_PTR(char);
 
 DECL_BT(int);
 DECL_BT_SOURCES(int, "%d");
+
+DECL_BST(int);
+DECL_BST_LL(int);
+DECL_BST_SOURCES(int, "%d");
+DECL_BST_LL_SOURCES(int, "%d");
 
 DECL_VEC(int);
 DECL_VEC_SOURCES(int, "%d");

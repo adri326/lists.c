@@ -18,8 +18,11 @@
     type* type##_ll_head(LL(type)* list); \
     type* type##_ll_tail(LL(type)* list); \
     type* type##_ll_get(LL(type)* list, size_t index); \
+    LL(type)* type##_ll_next(LL(type)* list); \
+    bool type##_ll_is_empty(LL(type)* list); \
     LL(type)* type##_ll_push_tail(LL(type)* list, type element); \
     LL(type)* type##_ll_push_head(LL(type)* list, type element); \
+    LL(type)* type##_ll_concat(LL(type)* list_a, LL(type)* list_b); \
     void type##_ll_printf(LL(type)* list); \
     void type##_ll_free(LL(type)* list);
 
@@ -72,6 +75,13 @@
         list->next = NULL; \
         return res; \
     } \
+    LL(type)* type##_ll_concat(LL(type)* list_a, LL(type)* list_b) { \
+        if (list_a == NULL) return list_b; \
+        LL(type)* res = list_a; \
+        while (list_a->next != NULL) list_a = list_a->next; \
+        list_a->next = list_b; \
+        return res; \
+    } \
     LL(type)* type##_ll_push_head(LL(type)* list, type element) { \
         LL(type)* res = (LL(type)*)malloc(sizeof(struct type##_ll)); \
         res->value = element; \
@@ -116,6 +126,13 @@
             free(list); \
             list = next; \
         } while (next != NULL); \
+    } \
+    LL(type)* type##_ll_next(LL(type)* list) { \
+        if (list == NULL) return NULL; \
+        else return list->next; \
+    } \
+    bool type##_ll_is_empty(LL(type)* list) { \
+        return list == NULL; \
     }
 
 DECL_LL_PTR(void)
