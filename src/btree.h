@@ -111,18 +111,20 @@
         return node->right; \
     }
 
-#define DECL_BT_SOURCES_PRINTF(type, printf_format) \
+#define DECL_BT_SOURCES_PRINTF_CUSTOM(type, printf_format) \
     void type##_bt_printf_rec(BT(type)* tree) { \
         if (tree == NULL) printf("()"); \
         else if (tree->left == NULL && tree->right == NULL) { \
             printf("("); \
-            printf(printf_format, tree->value); \
+            type value = tree->value; \
+            printf_format; \
             printf(")"); \
         } else { \
             printf("("); \
             type##_bt_printf_rec(tree->left); \
             printf(" <- "); \
-            printf(printf_format, tree->value); \
+            type value = tree->value; \
+            printf_format; \
             printf(" -> "); \
             type##_bt_printf_rec(tree->right); \
             printf(")"); \
@@ -133,6 +135,8 @@
         type##_bt_printf_rec(tree); \
         printf("\n"); \
     } \
+
+#define DECL_BT_SOURCES_PRINTF(type, printf_format) DECL_BT_SOURCES_PRINTF_CUSTOM(type, printf(printf_format, value))
 
 /** @struct TYPE_bt
 

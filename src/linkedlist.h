@@ -122,11 +122,12 @@
         return list == NULL; \
     }
 
-#define DECL_LL_SOURCES_PRINTF(type, printf_format) \
+#define DECL_LL_SOURCES_PRINTF_CUSTOM(type, printf_format) \
     void type##_ll_printf(LL(type)* list) { \
         printf("LinkedList<" #type "> ["); \
         while (true) { \
-            printf(printf_format, list->value); \
+            type value = list->value; \
+            printf_format; \
             if (list->next != NULL) { \
                 printf(", "); \
                 list = list->next; \
@@ -137,6 +138,8 @@
             } \
         } \
     } \
+
+#define DECL_LL_SOURCES_PRINTF(type, printf_format) DECL_LL_SOURCES_PRINTF(type, printf(printf_format, value))
 
 DECL_LL_PTR(void)
 
