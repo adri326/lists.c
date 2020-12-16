@@ -3,6 +3,8 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <inttypes.h>
+#include <stdio.h>
 
 #define BT(type) type##_bt_t
 
@@ -30,7 +32,7 @@
     BT(type)* type##_bt_prefix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data); \
     BT(type)* type##_bt_postfix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data);
 
-#define DECL_BT_SOURCES(type, printf_format) \
+#define DECL_BT_SOURCES(type) \
     BT(type)* type##_bt_new(type element) { \
         BT(type)* res = (BT(type)*)malloc(sizeof(struct type##_bt)); \
         res->value = element; \
@@ -65,27 +67,6 @@
         type##_bt_free(tree->left); \
         type##_bt_free(tree->right); \
         free(tree); \
-    } \
-    void type##_bt_printf_rec(BT(type)* tree) { \
-        if (tree == NULL) printf("()"); \
-        else if (tree->left == NULL && tree->right == NULL) { \
-            printf("("); \
-            printf(printf_format, tree->value); \
-            printf(")"); \
-        } else { \
-            printf("("); \
-            type##_bt_printf_rec(tree->left); \
-            printf(" <- "); \
-            printf(printf_format, tree->value); \
-            printf(" -> "); \
-            type##_bt_printf_rec(tree->right); \
-            printf(")"); \
-        } \
-    } \
-    void type##_bt_printf(BT(type)* tree) { \
-        printf("BinaryTree<" #type "> "); \
-        type##_bt_printf_rec(tree); \
-        printf("\n"); \
     } \
     bool type##_bt_is_leaf(BT(type)* node) { \
         if (node == NULL) return false; \
@@ -129,6 +110,29 @@
         if (node == NULL) return NULL; \
         return node->right; \
     }
+
+#define DECL_BT_SOURCES_PRINTF(type, printf_format) \
+    void type##_bt_printf_rec(BT(type)* tree) { \
+        if (tree == NULL) printf("()"); \
+        else if (tree->left == NULL && tree->right == NULL) { \
+            printf("("); \
+            printf(printf_format, tree->value); \
+            printf(")"); \
+        } else { \
+            printf("("); \
+            type##_bt_printf_rec(tree->left); \
+            printf(" <- "); \
+            printf(printf_format, tree->value); \
+            printf(" -> "); \
+            type##_bt_printf_rec(tree->right); \
+            printf(")"); \
+        } \
+    } \
+    void type##_bt_printf(BT(type)* tree) { \
+        printf("BinaryTree<" #type "> "); \
+        type##_bt_printf_rec(tree); \
+        printf("\n"); \
+    } \
 
 /** @struct TYPE_bt
 

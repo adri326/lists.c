@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #define VEC(type) type##_vec_t
 
@@ -22,7 +23,7 @@
     type* type##_vec_get(VEC(type)* vec, const size_t index); \
     int type##_vec_find(const VEC(type)* vec, bool (*predicate)(const type*, const void*), const void* predicate_data);
 
-#define DECL_VEC_SOURCES(type, printf_format) \
+#define DECL_VEC_SOURCES(type) \
     VEC(type)* type##_vec_new(const size_t capacity) { \
         VEC(type)* res = (VEC(type)*)malloc(sizeof(struct type##_vec)); \
         if (res == NULL) return NULL; \

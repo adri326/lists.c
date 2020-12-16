@@ -18,7 +18,7 @@
     LL(type)* type##_bst_into_ll(BST(type)* tree); \
     LL(type)* type##_bst_sort_ll(LL(type)* list);
 
-#define DECL_BST_SOURCES(type, printf_format) \
+#define DECL_BST_SOURCES(type) \
     BST(type)* type##_bst_insert(BST(type)* tree, type value) { \
         if (tree == NULL) return type##_bt_new(value); \
         else { \
@@ -30,7 +30,7 @@
             return tree; \
         } \
     }
-#define DECL_BST_LL_SOURCES(type, printf_format) \
+#define DECL_BST_LL_SOURCES(type) \
     BST(type)* type##_bst_from_ll(LL(type)* list) { \
         BST(type)* res = NULL; \
         while (!type##_ll_is_empty(list)) { \

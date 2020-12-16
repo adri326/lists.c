@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #define LL(type) type##_ll_t
 #define LL_PTR(type) type##_ll_ptr_t
@@ -32,7 +33,7 @@
     }; \
     typedef struct type##_ll_ptr LL_PTR(type);
 
-#define DECL_LL_SOURCES(type, printf_format) \
+#define DECL_LL_SOURCES(type) \
     LL(type)* type##_ll_new(type element) { \
         LL(type)* res = (LL(type)*)malloc(sizeof(struct type##_ll)); \
         res->value = element; \
@@ -104,20 +105,6 @@
         if (list == NULL) return NULL; \
         return list->next; \
     } \
-    void type##_ll_printf(LL(type)* list) { \
-        printf("LinkedList<" #type "> ["); \
-        while (true) { \
-            printf(printf_format, list->value); \
-            if (list->next != NULL) { \
-                printf(", "); \
-                list = list->next; \
-            } \
-            else { \
-                printf("]\n"); \
-                break; \
-            } \
-        } \
-    } \
     void type##_ll_free(LL(type)* list) { \
         if (list == NULL) return; \
         LL(type)* next; \
@@ -134,6 +121,22 @@
     bool type##_ll_is_empty(LL(type)* list) { \
         return list == NULL; \
     }
+
+#define DECL_LL_SOURCES_PRINTF(type, printf_format) \
+    void type##_ll_printf(LL(type)* list) { \
+        printf("LinkedList<" #type "> ["); \
+        while (true) { \
+            printf(printf_format, list->value); \
+            if (list->next != NULL) { \
+                printf(", "); \
+                list = list->next; \
+            } \
+            else { \
+                printf("]\n"); \
+                break; \
+            } \
+        } \
+    } \
 
 DECL_LL_PTR(void)
 
