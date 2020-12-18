@@ -21,7 +21,8 @@
     size_t type##_vec_length(const VEC(type)* vec); \
     size_t type##_vec_capacity(const VEC(type)* vec); \
     type* type##_vec_get(VEC(type)* vec, const size_t index); \
-    int type##_vec_find(const VEC(type)* vec, bool (*predicate)(const type*, const void*), const void* predicate_data);
+    int type##_vec_find(const VEC(type)* vec, bool (*predicate)(const type*, const void*), const void* predicate_data); \
+    void type##_vec_printf(const VEC(type)* vec);
 
 #define DECL_VEC_SOURCES(type) \
     VEC(type)* type##_vec_new(const size_t capacity) { \
@@ -85,6 +86,19 @@
         } \
         return -1; \
     }
+
+#define DECL_VEC_SOURCES_PRINTF_CUSTOM(type, printf_format) \
+    void type##_vec_printf(const VEC(type)* vec) { \
+        printf("Vec<" #type "> ["); \
+        for (size_t n = 0; n < vec->length; n++) { \
+            type value = vec->data[n]; \
+            {printf_format} \
+            if (n < vec->length - 1) printf(", "); \
+        } \
+        printf("]\n"); \
+    }
+
+#define DECL_VEC_SOURCES_PRINTF(type, printf_format) DECL_VEC_SOURCES_PRINTF_CUSTOM(type, printf(printf_format, value))
 
 /** @struct TYPE_vec
 
