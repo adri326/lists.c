@@ -30,7 +30,8 @@
     BT(type)* type##_bt_right(BT(type)* node); \
     BT(type)* type##_bt_get(BT(type)* tree, uintmax_t address); \
     BT(type)* type##_bt_prefix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data); \
-    BT(type)* type##_bt_postfix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data);
+    BT(type)* type##_bt_postfix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data); \
+    BT(type)* type##_bt_clone(BT(type)* node);
 
 #define DECL_BT_SOURCES(type) \
     BT(type)* type##_bt_new(type element) { \
@@ -109,6 +110,10 @@
     BT(type)* type##_bt_right(BT(type)* node) { \
         if (node == NULL) return NULL; \
         return node->right; \
+    } \
+    BT(type)* type##_bt_clone(BT(type)* node) { \
+        if (node == NULL) return NULL; \
+        return type##_bt_connect(type##_bt_clone(node->left), type##_bt_clone(node->right), node->value); \
     }
 
 #define DECL_BT_SOURCES_PRINTF_CUSTOM(type, printf_format) \

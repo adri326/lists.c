@@ -25,7 +25,8 @@
     LL(type)* type##_ll_push_head(LL(type)* list, type element); \
     LL(type)* type##_ll_concat(LL(type)* list_a, LL(type)* list_b); \
     void type##_ll_printf(LL(type)* list); \
-    void type##_ll_free(LL(type)* list);
+    void type##_ll_free(LL(type)* list); \
+    LL(type)* type##_ll_clone(LL(type)* list);
 
 #define DECL_LL_PTR(type) struct type##_ll_ptr { \
         type* value; \
@@ -120,6 +121,10 @@
     } \
     bool type##_ll_is_empty(LL(type)* list) { \
         return list == NULL; \
+    } \
+    LL(type)* type##_ll_clone(LL(type)* list) { \
+        if (list == NULL) return NULL; \
+        return type##_ll_push_head(type##_ll_clone(list->next, list->value)); \
     }
 
 #define DECL_LL_SOURCES_PRINTF_CUSTOM(type, printf_format) \
