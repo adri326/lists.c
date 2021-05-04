@@ -29,7 +29,7 @@
     LL(type)* type##_ll_push_tail(LL(type)* list, type element); \
     LL(type)* type##_ll_push_head(LL(type)* list, type element); \
     LL(type)* type##_ll_concat(LL(type)* list_a, LL(type)* list_b); \
-    void type##_ll_printf(LL(type)* list); /* Note: only available if DECL_LL_SOURCES_PRINTF* has been called */ \
+    void type##_ll_printf(LL(type)* list); /* Note: only available if DEF_LL_PRINTF* has been called */ \
     void type##_ll_free(LL(type)* list); \
     LL(type)* type##_ll_clone(LL(type)* list);
 
@@ -44,12 +44,12 @@
     }; \
     typedef struct type##_ll_ptr LL_PTR(type);
 
-/** @def DECL_LL_SOURCES(type)
+/** @def DEF_LL(type)
     @param type The type of the linked list
 
     Defines the LL-associated functions
 **/
-#define DECL_LL_SOURCES(type) \
+#define DEF_LL(type) \
     LL(type)* type##_ll_new(type element) { \
         LL(type)* res = (LL(type)*)malloc(sizeof(struct type##_ll)); \
         res->value = element; \
@@ -143,7 +143,7 @@
     }
 
 /**
-    @def DECL_LL_SOURCES_PRINTF_CUSTOM
+    @def DEF_LL_PRINTF_CUSTOM
     @param type The type of the elements in the linked list
     @param printf_callback A block of code that prints a value of the linked list. The value can be accessed through the symbol `value`.
 
@@ -152,10 +152,10 @@
     ## Example
 
     ```
-    DECL_LL_SOURCES_PRINTF_CUSTOM(char, printf("'%c'", value));
+    DEF_LL_PRINTF_CUSTOM(char, printf("'%c'", value));
     ```
 **/
-#define DECL_LL_SOURCES_PRINTF_CUSTOM(type, printf_callback) \
+#define DEF_LL_PRINTF_CUSTOM(type, printf_callback) \
     void type##_ll_printf(LL(type)* list) { \
         printf("LinkedList<" #type "> ["); \
         while (true) { \
@@ -173,7 +173,7 @@
     } \
 
 /**
-    @def DECL_LL_SOURCES_PRINTF_FN
+    @def DEF_LL_PRINTF_FN
     @param type The type of the elements in the linked list
     @param printf_callback A function to be called for each value of the linked list and that prints that value. Must take as only argument `type` and may be of any return type.
 
@@ -186,14 +186,14 @@
         printf("'%c'", c);
     }
 
-    DECL_LL_SOURCES_PRINTF_FN(char, print_my_char);
+    DEF_LL_PRINTF_FN(char, print_my_char);
     ```
 **/
-#define DECL_LL_SOURCES_PRINTF_FN(type, printf_callback) \
-    DECL_LL_SOURCES_PRINTF(type, printf_callback(value))
+#define DEF_LL_PRINTF_FN(type, printf_callback) \
+    DEF_LL_PRINTF(type, printf_callback(value))
 
 /**
-    @def DECL_LL_SOURCES_PRINTF
+    @def DEF_LL_PRINTF
     @param type The type of the elements in the linked list
     @param printf_format A format string for printf
 
@@ -202,11 +202,11 @@
     ## Example
 
     ```
-    DECL_LL_SOURCES_PRINTF(char, "'%c'");
+    DEF_LL_PRINTF(char, "'%c'");
     ```
 **/
-#define DECL_LL_SOURCES_PRINTF(type, printf_format) \
-    DECL_LL_SOURCES_PRINTF_CUSTOM(type, printf(printf_format, value))
+#define DEF_LL_PRINTF(type, printf_format) \
+    DEF_LL_PRINTF_CUSTOM(type, printf(printf_format, value))
 
 DECL_LL_PTR(void)
 

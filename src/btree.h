@@ -27,7 +27,7 @@
     size_t type##_bt_depth(BT(type)* tree); \
     size_t type##_bt_leaves(BT(type)* tree); \
     BT(type)* type##_bt_connect(BT(type)* left, BT(type)* right, type element); \
-    void type##_bt_printf(BT(type)* tree); /* Note: only available if DECL_BT_SOURCES_PRINTF* is used */ \
+    void type##_bt_printf(BT(type)* tree); /* Note: only available if DEF_BT_PRINTF* is used */ \
     void type##_bt_free(BT(type)* tree); \
     bool type##_bt_is_leaf(BT(type)* node); \
     bool type##_bt_is_empty(BT(type)* node); \
@@ -38,12 +38,12 @@
     BT(type)* type##_bt_postfix_find(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data); \
     BT(type)* type##_bt_clone(BT(type)* node);
 
-/** @def DECL_BT_SOURCES(type)
+/** @def DEF_BT(type)
     @param type The type of the binary tree
 
     Defines the BT-associated functions.
 **/
-#define DECL_BT_SOURCES(type) \
+#define DEF_BT(type) \
     BT(type)* type##_bt_new(type element) { \
         BT(type)* res = (BT(type)*)malloc(sizeof(struct type##_bt)); \
         res->value = element; \
@@ -127,7 +127,7 @@
     }
 
 /**
-    @def DECL_BT_SOURCES_PRINTF_CUSTOM
+    @def DEF_BT_PRINTF_CUSTOM
     @param type The type of the elements in the binary tree
     @param printf_callback A block of code that prints a value of the binary tree. The value can be accessed through the symbol `value`.
 
@@ -136,10 +136,10 @@
     ## Example
 
     ```
-    DECL_BT_SOURCES_PRINTF_CUSTOM(char, printf("'%c'", value));
+    DEF_BT_PRINTF_CUSTOM(char, printf("'%c'", value));
     ```
 **/
-#define DECL_BT_SOURCES_PRINTF_CUSTOM(type, printf_callback) \
+#define DEF_BT_PRINTF_CUSTOM(type, printf_callback) \
     void type##_bt_printf_rec(BT(type)* tree) { \
         if (tree == NULL) printf("()"); \
         else if (tree->left == NULL && tree->right == NULL) { \
@@ -165,7 +165,7 @@
     }
 
 /**
-    @def DECL_BT_SOURCES_PRINTF_FN
+    @def DEF_BT_PRINTF_FN
     @param type The type of the elements in the binary tree
     @param printf_callback A function to be called for each value of the binary tree and that prints that value. Must take as only argument `type` and may be of any return type.
 
@@ -178,14 +178,14 @@
         printf("'%c'", c);
     }
 
-    DECL_BT_SOURCES_PRINTF_FN(char, print_my_char);
+    DEF_BT_PRINTF_FN(char, print_my_char);
     ```
 **/
-#define DECL_BT_SOURCES_PRINTF_FN(type, printf_callback) \
-    DECL_BT_SOURCES_PRINTF_CUSTOM(type, orintf_callback(value))
+#define DEF_BT_PRINTF_FN(type, printf_callback) \
+    DEF_BT_PRINTF_CUSTOM(type, orintf_callback(value))
 
 /**
-    @def DECL_BT_SOURCES_PRINTF
+    @def DEF_BT_PRINTF
     @param type The type of the elements in the binary tree
     @param printf_format A format string for printf
 
@@ -194,11 +194,11 @@
     ## Example
 
     ```
-    DECL_BT_SOURCES_PRINTF(char, "'%c'");
+    DEF_BT_PRINTF(char, "'%c'");
     ```
 **/
-#define DECL_BT_SOURCES_PRINTF(type, printf_format) \
-    DECL_BT_SOURCES_PRINTF_CUSTOM(type, printf(printf_format, value))
+#define DEF_BT_PRINTF(type, printf_format) \
+    DEF_BT_PRINTF_CUSTOM(type, printf(printf_format, value))
 
 /** @struct TYPE_bt
 
@@ -253,7 +253,7 @@
 
     Prints a tree; useful for debugging.
 
-    **Note:** only available if DECL_BT_SOURCES_PRINTF* is used.
+    **Note:** only available if DEF_BT_PRINTF* is used.
 **/
 
 /** @fn TYPE_bt_connect(BT(TYPE)* left, BT(TYPE)* right, TYPE element)

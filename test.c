@@ -8,19 +8,19 @@
 #include <vec.h>
 
 DECL_LL(int);
-DECL_LL_SOURCES(int);
+DEF_LL(int);
 DECL_LL_PTR(char);
 
 DECL_BT(int);
-DECL_BT_SOURCES(int);
+DEF_BT(int);
 
 DECL_BST(int);
 DECL_BST_LL(int);
-DECL_BST_SOURCES(int);
-DECL_BST_LL_SOURCES(int);
+DEF_BST(int);
+DEF_BST_LL(int);
 
 DECL_VEC(int);
-DECL_VEC_SOURCES(int);
+DEF_VEC(int);
 
 START_TEST(test_ll_new) {
     LL(int)* int_list = int_ll_new(10);

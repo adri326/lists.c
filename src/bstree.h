@@ -32,13 +32,13 @@
     LL(type)* type##_bst_sort_ll(LL(type)* list);
 
 /**
-    @def DECL_BST_SOURCES
+    @def DEF_BST
     @param type The type of the BST
 
     Defines the BST-associated functions.
-    Requires `DECL_BT(type)`, `DECL_BST(type)` and `DECL_BT_SOURCES(type)` to have been called beforehand.
+    Requires `DECL_BT(type)`, `DECL_BST(type)` and `DEF_BT(type)` to have been called beforehand.
 **/
-#define DECL_BST_SOURCES(type) \
+#define DEF_BST(type) \
     BST(type)* type##_bst_insert(BST(type)* tree, type value) { \
         if (tree == NULL) return type##_bt_new(value); \
         else { \
@@ -52,13 +52,13 @@
     }
 
 /**
-    @def DECL_BST_SOURCES
+    @def DEF_BST
     @param type The type of the BST
 
     Defines the BST-associated functions that allow conversion to/from linked lists (LL).
-    Requires `DECL_BT(type)`, `DECL_BST(type)`, `DECL_LL(type)`, `DECL_BST_LL(type)`, `DECL_BT_SOURCES(type)` and `DECL_LL_SOURCES(type)` to have been called beforehand.
+    Requires `DECL_BT(type)`, `DECL_BST(type)`, `DECL_LL(type)`, `DECL_BST_LL(type)`, `DEF_BT(type)` and `DEF_LL(type)` to have been called beforehand.
 **/
-#define DECL_BST_LL_SOURCES(type) \
+#define DEF_BST_LL(type) \
     BST(type)* type##_bst_from_ll(LL(type)* list) { \
         BST(type)* res = NULL; \
         while (!type##_ll_is_empty(list)) { \
@@ -110,7 +110,7 @@
 
     Behavior is undefined if the linked list has been modified to contain a closed loop.
 
-    **Note:** only available if `DECL_BST_LL(TYPE)` and `DECL_BST_LL_SOURCES(TYPE)` have been called.
+    **Note:** only available if `DECL_BST_LL(TYPE)` and `DEF_BST_LL(TYPE)` have been called.
 **/
 
 /** @fn TYPE_bst_into_ll(BST(TYPE)* bst)
@@ -120,7 +120,7 @@
 
     Behavior is undefined if the binary search tree has been altered to contain a closed loop or if the node ordering invariant has not been respected.
 
-    **Note:** only available if `DECL_BST_LL(TYPE)` and `DECL_BST_LL_SOURCES(TYPE)` have been called.
+    **Note:** only available if `DECL_BST_LL(TYPE)` and `DEF_BST_LL(TYPE)` have been called.
 **/
 
 /** @fn TYPE_bst_sort_ll(LL(TYPE)* list)
@@ -132,7 +132,7 @@
 
     Average time complexity of this sorting method is `O(logn)`
 
-    **Note:** only available if `DECL_BST_LL(TYPE)` and `DECL_BST_LL_SOURCES(TYPE)` have been called.
+    **Note:** only available if `DECL_BST_LL(TYPE)` and `DEF_BST_LL(TYPE)` have been called.
 **/
 
 #endif // BSTREE_H

@@ -7,6 +7,11 @@
 
 #define VEC(type) type##_vec_t
 
+/** @def DECL_VEC(type)
+    @param type The type of the vector
+
+    Declares a vector (VEC) type and VEC-associated functions.
+**/
 #define DECL_VEC(type) struct type##_vec { \
         type* data; \
         size_t capacity; \
@@ -21,11 +26,16 @@
     size_t type##_vec_length(const VEC(type)* vec); \
     size_t type##_vec_capacity(const VEC(type)* vec); \
     type* type##_vec_get(VEC(type)* vec, const size_t index); \
-    void type##_vec_printf(VEC(type)* vec); /* Note: only available if DECL_VEC_SOURCES_PRINTF* is used */ \
+    void type##_vec_printf(VEC(type)* vec); /* Note: only available if DEF_VEC_PRINTF* is used */ \
     int type##_vec_find(const VEC(type)* vec, bool (*predicate)(const type*, const void*), const void* predicate_data); \
     VEC(type)* type##_vec_clone(const VEC(type)* vec);
 
-#define DECL_VEC_SOURCES(type) \
+/** @def DEF_VEC(type)
+    @param type The type of the vector
+
+    Defines the VEC-associated functions.
+**/
+#define DEF_VEC(type) \
     VEC(type)* type##_vec_new(const size_t capacity) { \
         VEC(type)* res = (VEC(type)*)malloc(sizeof(struct type##_vec)); \
         if (res == NULL) return NULL; \
@@ -96,7 +106,7 @@
     }
 
 /**
-    @def DECL_VEC_SOURCES_PRINTF_CUSTOM
+    @def DEF_VEC_PRINTF_CUSTOM
     @param type The type of the elements in the vector
     @param printf_callback A block of code that prints a value of the vector. The value can be accessed through the symbol `value`.
 
@@ -105,10 +115,10 @@
     ## Example
 
     ```
-    DECL_VEC_SOURCES_PRINTF_CUSTOM(char, printf("'%c'", value));
+    DEF_VEC_PRINTF_CUSTOM(char, printf("'%c'", value));
     ```
 **/
-#define DECL_VEC_SOURCES_PRINTF_CUSTOM(type, printf_callback) \
+#define DEF_VEC_PRINTF_CUSTOM(type, printf_callback) \
     void type##_vec_printf(VEC(type)* vec) { \
         printf("Vec<" #type "> ["); \
         for (size_t n = 0; n < vec->length; n++) { \
@@ -120,7 +130,7 @@
     }
 
 /**
-    @def DECL_VEC_SOURCES_PRINTF_FN
+    @def DEF_VEC_PRINTF_FN
     @param type The type of the elements in the vector
     @param printf_callback A function to be called for each value of the vector and that prints that value. Must take as only argument `type` and may be of any return type.
 
@@ -133,14 +143,14 @@
         printf("'%c'", c);
     }
 
-    DECL_VEC_SOURCES_PRINTF_FN(char, print_my_char);
+    DEF_VEC_PRINTF_FN(char, print_my_char);
     ```
 **/
-#define DECL_VEC_SOURCES_PRINTF_FN(type, printf_callback) \
-    DECL_VEC_SOURCES_PRINTF_CUSTOM(type, printf_callback(value))
+#define DEF_VEC_PRINTF_FN(type, printf_callback) \
+    DEF_VEC_PRINTF_CUSTOM(type, printf_callback(value))
 
 /**
-    @def DECL_VEC_SOURCES_PRINTF
+    @def DEF_VEC_PRINTF
     @param type The type of the elements in the vector
     @param printf_format A format string for printf
 
@@ -149,11 +159,11 @@
     ## Example
 
     ```
-    DECL_VEC_SOURCES_PRINTF(char, "'%c'");
+    DEF_VEC_PRINTF(char, "'%c'");
     ```
 **/
-#define DECL_VEC_SOURCES_PRINTF(type, printf_format) \
-    DECL_VEC_SOURCES_PRINTF_CUSTOM(type, printf(printf_format, value))
+#define DEF_VEC_PRINTF(type, printf_format) \
+    DEF_VEC_PRINTF_CUSTOM(type, printf(printf_format, value))
 
 /** @struct TYPE_vec
 
@@ -229,7 +239,7 @@
     @param vec The vector to print out
 
     Prints a vector; useful for debugging.
-    **Note:** only available if DECL_VEC_SOURCES_PRINTF* is used.
+    **Note:** only available if DEF_VEC_PRINTF* is used.
 **/
 
 /** @fn TYPE_vec_find(const VEC(TYPE)* vector, bool (*predicate)(const TYPE*, const void*), const void* predicate_data)
@@ -247,7 +257,7 @@
 
     ```c
     DECL_VEC(int);
-    DECL_VEC_SOURCES(int, "%d");
+    DEF_VEC(int, "%d");
 
     bool int_eq(int* a, void* b) {
         return *a == *(int*)b;
