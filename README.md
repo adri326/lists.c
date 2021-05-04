@@ -40,7 +40,8 @@ You may now include this file in your source code:
 #include <linkedlist.h>
 
 DECL_LL(int); // declare the structure (put this in your .h if you're using this structure as a return value or argument or if you are using the structure across files)
-DECL_LL_SOURCES(int, "%d"); // fill in the body of the different linked list-related functions
+DEF_LL(int); // fill in the body of the different linked list-related functions
+DEF_LL_PRINTF(int, "%d"); // make the int_ll_printf function available
 
 int main() {
   LL(int)* int_list = int_ll_new(0); // create a new linked list containing [0]
