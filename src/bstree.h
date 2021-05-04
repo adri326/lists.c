@@ -7,17 +7,37 @@
 
 #define BST(type) type##_bst_t
 
-// requires the user to have defined BT(type) beforehand and that the ordinality operators can be applied on type
+/**
+    @def DECL_BST(type)
+    @param type The type of the BST
 
+    Declares a binary search tree (BST) type and the BST-associated functions.
+    This macro requires `DECL_BT(type)` to have been called beforehand.
+
+    The new `BST(type)` type is effectively a typedef on `struct TYPE_bt`, and thus it can be used interchangeably with `BT(type)` and BT-associated functions.
+**/
 #define DECL_BST(type) typedef struct type##_bt BST(type); \
     BST(type)* type##_bst_insert(BST(type)* tree, type value);
 
-// requires the user to have defined LL(type) beforehand
+/**
+    @def DECL_BST_LL
+    @param type The type of the BST
+
+    Declares the BST-associated functions that allow the usage of BSTs with linked lists of `type` (LL).
+    This macro requires `DECL_BT(type)`, `DECL_BST(type)` and `DECL_LL(type)` to have been called beforehand.
+**/
 #define DECL_BST_LL(type) \
     BST(type)* type##_bst_from_ll(LL(type)* list); \
     LL(type)* type##_bst_into_ll(BST(type)* tree); \
     LL(type)* type##_bst_sort_ll(LL(type)* list);
 
+/**
+    @def DECL_BST_SOURCES
+    @param type The type of the BST
+
+    Defines the BST-associated functions.
+    Requires `DECL_BT(type)`, `DECL_BST(type)` and `DECL_BT_SOURCES(type)` to have been called beforehand.
+**/
 #define DECL_BST_SOURCES(type) \
     BST(type)* type##_bst_insert(BST(type)* tree, type value) { \
         if (tree == NULL) return type##_bt_new(value); \
@@ -30,6 +50,14 @@
             return tree; \
         } \
     }
+
+/**
+    @def DECL_BST_SOURCES
+    @param type The type of the BST
+
+    Defines the BST-associated functions that allow conversion to/from linked lists (LL).
+    Requires `DECL_BT(type)`, `DECL_BST(type)`, `DECL_LL(type)`, `DECL_BST_LL(type)`, `DECL_BT_SOURCES(type)` and `DECL_LL_SOURCES(type)` to have been called beforehand.
+**/
 #define DECL_BST_LL_SOURCES(type) \
     BST(type)* type##_bst_from_ll(LL(type)* list) { \
         BST(type)* res = NULL; \
@@ -52,5 +80,59 @@
         type##_bt_free(bst); \
         return res; \
     }
+
+/** @typedef TYPE_bst_t
+
+    Resolves to `struct TYPE_bt`; can also be accessed with `BST(TYPE)`.
+**/
+
+/** @def BST(TYPE)
+
+    Resolves to `struct TYPE_bt`.
+**/
+
+/** @fn TYPE_bst_insert(BST(TYPE)* tree, TYPE value)
+    @returns A pointer to the new, modified tree
+
+    Inserts a value of type `TYPE` into a binary search tree, inserting it such that for any node, `left(node)->value ≤ node->value ≤ right(node)->value`.
+
+    Does not self-balance.
+
+    Behavior is undefined if the BST has been modified to contain a closed loop or if the node ordering invariant has not been respected.
+**/
+
+/** @fn TYPE_bst_from_ll(LL(TYPE)* list)
+    @returns A pointer to the new BST
+
+    Turns a linked list of type `LL(TYPE)*` into a binary search tree, by repeatidly inserting its elements.
+
+    (Currently) does not self-balance.
+
+    Behavior is undefined if the linked list has been modified to contain a closed loop.
+
+    **Note:** only available if `DECL_BST_LL(TYPE)` and `DECL_BST_LL_SOURCES(TYPE)` have been called.
+**/
+
+/** @fn TYPE_bst_into_ll(BST(TYPE)* bst)
+    @returns A pointer to the new, sorted linked list
+
+    Turns a binary search tree into a sorted linked list.
+
+    Behavior is undefined if the binary search tree has been altered to contain a closed loop or if the node ordering invariant has not been respected.
+
+    **Note:** only available if `DECL_BST_LL(TYPE)` and `DECL_BST_LL_SOURCES(TYPE)` have been called.
+**/
+
+/** @fn TYPE_bst_sort_ll(LL(TYPE)* list)
+    @returns A sorted version of `list`
+
+    Calls `tree = TYPE_bst_from_ll(list)` and `TYPE_bst_into_ll(tree)`.
+
+    Behavior is undefined if `list` contains a closed loop.
+
+    Average time complexity of this sorting method is `O(logn)`
+
+    **Note:** only available if `DECL_BST_LL(TYPE)` and `DECL_BST_LL_SOURCES(TYPE)` have been called.
+**/
 
 #endif // BSTREE_H

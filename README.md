@@ -1,5 +1,7 @@
 # lists.c
 
+![Latest release version](https://img.shields.io/github/v/release/adri326/lists.c)
+
 Different kinds of lists and list-like structures, implemented in pure C (ie. using pretty much only macros).
 
 ## Currently implemented

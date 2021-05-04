@@ -11,6 +11,11 @@
 // Not yet supported!
 // #define BT_PTR(type) type##_bt_ptr_t
 
+/** @def DECL_BT(type)
+    @param type The type of the binary tree
+
+    Declares a binary tree (BT) type and BT-associated functions.
+**/
 #define DECL_BT(type) struct type##_bt { \
         type value; \
         struct type##_bt* left; \
@@ -22,17 +27,22 @@
     size_t type##_bt_depth(BT(type)* tree); \
     size_t type##_bt_leaves(BT(type)* tree); \
     BT(type)* type##_bt_connect(BT(type)* left, BT(type)* right, type element); \
-    void type##_bt_printf(BT(type)* tree); \
+    void type##_bt_printf(BT(type)* tree); /* Note: only available if DECL_BT_SOURCES_PRINTF* is used */ \
     void type##_bt_free(BT(type)* tree); \
     bool type##_bt_is_leaf(BT(type)* node); \
     bool type##_bt_is_empty(BT(type)* node); \
     BT(type)* type##_bt_left(BT(type)* node); \
     BT(type)* type##_bt_right(BT(type)* node); \
     BT(type)* type##_bt_get(BT(type)* tree, uintmax_t address); \
-    BT(type)* type##_bt_prefix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data); \
-    BT(type)* type##_bt_postfix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data); \
+    BT(type)* type##_bt_prefix_find(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data); \
+    BT(type)* type##_bt_postfix_find(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data); \
     BT(type)* type##_bt_clone(BT(type)* node);
 
+/** @def DECL_BT_SOURCES(type)
+    @param type The type of the binary tree
+
+    Defines the BT-associated functions.
+**/
 #define DECL_BT_SOURCES(type) \
     BT(type)* type##_bt_new(type element) { \
         BT(type)* res = (BT(type)*)malloc(sizeof(struct type##_bt)); \
@@ -86,19 +96,19 @@
             else return type##_bt_get(tree->left, address >> 1); \
         } \
     } \
-    BT(type)* type##_bt_prefix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data) { \
+    BT(type)* type##_bt_prefix_find(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data) { \
         if (tree == NULL) return NULL; \
         if (predicate(tree->value, predicate_data)) return tree; \
-        BT(type)* left = type##_bt_prefix_search(tree->left, predicate, predicate_data); \
+        BT(type)* left = type##_bt_prefix_find(tree->left, predicate, predicate_data); \
         if (left != NULL) return left; \
-        BT(type)* right = type##_bt_prefix_search(tree->right, predicate, predicate_data); \
+        BT(type)* right = type##_bt_prefix_find(tree->right, predicate, predicate_data); \
         return right; \
     } \
-    BT(type)* type##_bt_postfix_search(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data) { \
+    BT(type)* type##_bt_postfix_find(BT(type)* tree, bool (*predicate)(const type, const void*), const void* predicate_data) { \
         if (tree == NULL) return NULL; \
-        BT(type)* left = type##_bt_postfix_search(tree->left, predicate, predicate_data); \
+        BT(type)* left = type##_bt_postfix_find(tree->left, predicate, predicate_data); \
         if (left != NULL) return left; \
-        BT(type)* right = type##_bt_postfix_search(tree->right, predicate, predicate_data); \
+        BT(type)* right = type##_bt_postfix_find(tree->right, predicate, predicate_data); \
         if (right != NULL) return right; \
         if (predicate(tree->value, predicate_data)) return tree; \
         else return NULL; \
@@ -116,20 +126,33 @@
         return type##_bt_connect(type##_bt_clone(node->left), type##_bt_clone(node->right), node->value); \
     }
 
-#define DECL_BT_SOURCES_PRINTF_CUSTOM(type, printf_format) \
+/**
+    @def DECL_BT_SOURCES_PRINTF_CUSTOM
+    @param type The type of the elements in the binary tree
+    @param printf_callback A block of code that prints a value of the binary tree. The value can be accessed through the symbol `value`.
+
+    Defines the `TYPE_bt_printf` function, printing the values of the binary tree *by executing* `printf_callback`.
+
+    ## Example
+
+    ```
+    DECL_BT_SOURCES_PRINTF_CUSTOM(char, printf("'%c'", value));
+    ```
+**/
+#define DECL_BT_SOURCES_PRINTF_CUSTOM(type, printf_callback) \
     void type##_bt_printf_rec(BT(type)* tree) { \
         if (tree == NULL) printf("()"); \
         else if (tree->left == NULL && tree->right == NULL) { \
             printf("("); \
             type value = tree->value; \
-            printf_format; \
+            printf_callback; \
             printf(")"); \
         } else { \
             printf("("); \
             type##_bt_printf_rec(tree->left); \
             printf(" <- "); \
             type value = tree->value; \
-            printf_format; \
+            printf_callback; \
             printf(" -> "); \
             type##_bt_printf_rec(tree->right); \
             printf(")"); \
@@ -139,9 +162,43 @@
         printf("BinaryTree<" #type "> "); \
         type##_bt_printf_rec(tree); \
         printf("\n"); \
-    } \
+    }
 
-#define DECL_BT_SOURCES_PRINTF(type, printf_format) DECL_BT_SOURCES_PRINTF_CUSTOM(type, printf(printf_format, value))
+/**
+    @def DECL_BT_SOURCES_PRINTF_FN
+    @param type The type of the elements in the binary tree
+    @param printf_callback A function to be called for each value of the binary tree and that prints that value. Must take as only argument `type` and may be of any return type.
+
+    Defines the `TYPE_bt_printf` function, printing the values of the binary tree *by calling* `printf_callback`.
+
+    ## Example
+
+    ```
+    void print_my_char(char c) {
+        printf("'%c'", c);
+    }
+
+    DECL_BT_SOURCES_PRINTF_FN(char, print_my_char);
+    ```
+**/
+#define DECL_BT_SOURCES_PRINTF_FN(type, printf_callback) \
+    DECL_BT_SOURCES_PRINTF_CUSTOM(type, orintf_callback(value))
+
+/**
+    @def DECL_BT_SOURCES_PRINTF
+    @param type The type of the elements in the binary tree
+    @param printf_format A format string for printf
+
+    Defines the `TYPE_bt_printf` function, printing the values of the binary tree using `printf_format` *as printf format*.
+
+    ## Example
+
+    ```
+    DECL_BT_SOURCES_PRINTF(char, "'%c'");
+    ```
+**/
+#define DECL_BT_SOURCES_PRINTF(type, printf_format) \
+    DECL_BT_SOURCES_PRINTF_CUSTOM(type, printf(printf_format, value))
 
 /** @struct TYPE_bt
 
@@ -194,7 +251,9 @@
 /** @fn TYPE_bt_printf(BT(TYPE)* tree)
     @param tree The tree to print out
 
-    Prints a tree; useful for debugging
+    Prints a tree; useful for debugging.
+
+    **Note:** only available if DECL_BT_SOURCES_PRINTF* is used.
 **/
 
 /** @fn TYPE_bt_connect(BT(TYPE)* left, BT(TYPE)* right, TYPE element)

@@ -1,0 +1,5 @@
+0.1.1:
+- Renamed TYPE_bt_postfix_search and TYPE_bt_prefix_search to TYPE_bt_postfix_find and TYPE_bt_prefix_find
+- Added TYPE_vec_printf, DECL_VEC_SOURCES_PRINTF_CUSTOM, DECL_VEC_SOURCES_PRINTF_FN and DECL_VEC_SOURCES_PRINTF
+- Added DECL_LL_SOURCES_PRINTF_FN and DECL_BT_SOURCES_PRINTF_FN
+- Documented most things
