@@ -6,10 +6,11 @@ Different kinds of lists and list-like structures, implemented in pure C (ie. us
 
 ## Currently implemented
 
-- Linked Lists (`linkedlist.h`): comes in two flavors, a value-based one (`LL(type)`) and a pointer-based one (`LL_PTR(type)`); shipped without cyclicity assertions!
+- Linked Lists (`linkedlist.h`): comes in two flavors, a value-based one (`LL(type)`) and a pointer-based one (`LL_PTR(type)`); does not feature cyclicity verification!
 - Vector (`vec.h`): scalable arrays
-- Queue (TODO): scalable circular arrays
-- Binary trees (`btree.h`): shipped without cyclicity assertions!
+- Ring (`ring.h`): scalable circular arrays
+- Binary trees (`btree.h`): does not feature cyclicity verification!
+- Binary search trees (`bstree.h`)
 
 ## Installation
 

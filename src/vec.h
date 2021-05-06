@@ -71,7 +71,7 @@
         return vec->length; \
     } \
     type type##_vec_pop(VEC(type)* vec) { \
-        type res; /* Initialized to zero */ \
+        type res; \
         if (vec->length == 0) return res; \
         res = vec->data[vec->length - 1]; \
         vec->length -= 1; \
@@ -99,6 +99,7 @@
     } \
     VEC(type)* type##_vec_clone(const VEC(type)* vec) { \
         VEC(type)* res = type##_vec_new(vec->length); \
+        if (!res) return NULL; \
         for (size_t n = 0; n < vec->length; n++) { \
             type##_vec_push(res, vec->data[n]); \
         } \
@@ -199,14 +200,14 @@
     @param vector The scalable array whose length is to get
     @returns The length of `vector`, 0 if NULL
 
-    Returns the length of vector, or 0 if that pointer is NULL.
+    Returns the length of `vector`, or 0 if that pointer is NULL.
 **/
 
 /** @fn TYPE_vec_capacity(VEC(TYPE)* vector)
     @param vector The scalable array whose capacity is to get
     @returns The capacity of `vector`, 0 if NULL
 
-    Returns the capacity of vector, or 0 if that pointer is NULL.
+    Returns the capacity of `vector`, or 0 if that pointer is NULL.
 **/
 
 /** @fn TYPE_vec_resize(VEC(TYPE)* vector, size_t new_capacity)
@@ -215,7 +216,7 @@
     @returns The new capacity (adapted based on `vector->length`)
 
     Resizes the vector's allocated space. The values contained by `vector` are left unchanged, although previous pointers to these might become invalidated.
-    If `new_capacity < vector`, then the allocated space will be shrunk to the length of vector, as to not loose any element.
+    If `new_capacity < vector->capacity`, then the allocated space will be shrunk to the length of `vector`, as to not loose any element.
     Thus, if you wish to shrink the vector, you may call `TYPE_vec_resize(vector, 1);`
 **/
 
@@ -257,7 +258,7 @@
 
     ```c
     DECL_VEC(int);
-    DEF_VEC(int, "%d");
+    DEF_VEC(int);
 
     bool int_eq(int* a, void* b) {
         return *a == *(int*)b;

@@ -1,3 +1,7 @@
+1.3.0:
+- Changed the versioning system
+- Added RING(type), aka VecDeque or growable ring buffer
+
 0.2.0:
 - Renamed DECL_*_SOURCES to DEF_*
 

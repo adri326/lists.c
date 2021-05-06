@@ -6,6 +6,7 @@
 #include <btree.h>
 #include <bstree.h>
 #include <vec.h>
+#include <ring.h>
 
 DECL_LL(int);
 DEF_LL(int);
@@ -21,6 +22,9 @@ DEF_BST_LL(int);
 
 DECL_VEC(int);
 DEF_VEC(int);
+
+DECL_RING(int);
+DEF_RING(int);
 
 START_TEST(test_ll_new) {
     LL(int)* int_list = int_ll_new(10);
@@ -216,6 +220,79 @@ START_TEST(test_vec_find) {
 }
 END_TEST
 
+START_TEST(test_ring_new) {
+    RING(int)* int_ring = int_ring_new(4);
+
+    int_ring_free(int_ring);
+}
+END_TEST
+
+START_TEST(test_ring_length) {
+    RING(int)* int_ring = int_ring_new(4);
+
+    for (int n = 0; n < 4; n++) {
+        ck_assert_int_eq((int)int_ring_length(int_ring), n);
+        int_ring_push_head(int_ring, n);
+    }
+
+    for (int n = 0; n < 6; n++) {
+        ck_assert_int_eq((int)int_ring_length(int_ring), n + 4);
+        int_ring_push_tail(int_ring, n);
+    }
+
+    int_ring_free(int_ring);
+}
+END_TEST
+
+START_TEST(test_ring_pop) {
+    RING(int)* int_ring = int_ring_new(4);
+
+    for (int n = 0; n < 4; n++) {
+        int_ring_push_head(int_ring, n);
+    }
+
+    for (int n = 3; n >= 0; n--) {
+        ck_assert_int_eq(int_ring_pop_head(int_ring), n);
+        ck_assert_int_eq(int_ring_length(int_ring), n);
+    }
+
+    for (int n = 0; n < 4; n++) {
+        int_ring_push_head(int_ring, n);
+    }
+
+    for (int n = 0; n < 4; n++) {
+        ck_assert_int_eq(int_ring_pop_tail(int_ring), n);
+        ck_assert_int_eq(int_ring_length(int_ring), 3 - n);
+    }
+
+    int_ring_free(int_ring);
+}
+END_TEST
+
+START_TEST(test_ring_find) {
+    RING(int)* int_ring = int_ring_new(4);
+
+    for (int n = 0; n < 4; n++) {
+        int_ring_push_head(int_ring, n);
+    }
+
+    for (int n = 0; n < 4; n++) {
+        ck_assert_int_eq(int_ring_find(int_ring, test_vec_find_sub, &n), n);
+    }
+
+    int x = -1;
+    ck_assert_int_eq(int_ring_find(int_ring, test_vec_find_sub, &x), -1);
+
+    int_ring_pop_tail(int_ring);
+
+    for (int n = 1; n < 4; n++) {
+        ck_assert_int_eq(int_ring_find(int_ring, test_vec_find_sub, &n), n - 1);
+    }
+
+    int_ring_free(int_ring);
+}
+END_TEST
+
 Suite* ll_suite() {
     Suite* res = suite_create("LinkedList");
     TCase* tc_core = tcase_create("Core");
@@ -250,17 +327,31 @@ Suite* vec_suite() {
     return res;
 }
 
+Suite* ring_suite() {
+    Suite* res = suite_create("Ring");
+    TCase* tc_core = tcase_create("Core");
+    tcase_add_test(tc_core, test_ring_new);
+    tcase_add_test(tc_core, test_ring_length);
+    tcase_add_test(tc_core, test_ring_pop);
+    tcase_add_test(tc_core, test_ring_find);
+    suite_add_tcase(res, tc_core);
+    return res;
+}
+
 int main(int argc, char* argv[]) {
     Suite* ll_s = ll_suite();
     Suite* bt_s = bt_suite();
     Suite* vec_s = vec_suite();
+    Suite* ring_s = ring_suite();
     SRunner* ll_sr = srunner_create(ll_s);
     SRunner* bt_sr = srunner_create(bt_s);
     SRunner* vec_sr = srunner_create(vec_s);
+    SRunner* ring_sr = srunner_create(ring_s);
 
     srunner_run_all(ll_sr, CK_NORMAL);
     srunner_run_all(bt_sr, CK_NORMAL);
     srunner_run_all(vec_sr, CK_NORMAL);
-    int fails = srunner_ntests_failed(ll_sr) + srunner_ntests_failed(bt_sr) + srunner_ntests_failed(vec_sr);
+    srunner_run_all(ring_sr, CK_NORMAL);
+    int fails = srunner_ntests_failed(ll_sr) + srunner_ntests_failed(bt_sr) + srunner_ntests_failed(vec_sr) + srunner_ntests_failed(ring_sr);
     return (fails == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }
